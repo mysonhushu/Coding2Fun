@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import com.asynch.interfaces.IProcessor;
+import com.asynch.common.Article;
+import com.asynch.common.Result;
 import com.asynch.util.CommonUtils;
 
-public class AsynchScrapper extends CommonScrapper implements IProcessor {
+public class AsynchScrapper extends CommonScrapper {
 
 	private final List<String> urlList;
 	private final Executor executor;
@@ -20,9 +21,28 @@ public class AsynchScrapper extends CommonScrapper implements IProcessor {
 
 	@Override
 	public void process() {
-		urlList.stream()
-				.map(url -> CompletableFuture.supplyAsync(() -> fetchArticle(url), executor))
-				.map(future -> future.thenApply(article -> getResult(article)));
+		CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
+			try {
+				return getPageSource(urlList.get(0));
+			} catch (Exception e) {
+				return null;
+			}
+		});
+		CompletableFuture<Article> future2 = future1.thenApply(value -> {
+			if(value != null){
+				return fetchArticle(value);
+			}else{
+				return null;
+			}
+		});
+		CompletableFuture<Result> future3 = future2.thenApplyAsync(article -> {
+			if(article != null){
+				return getResult(article);
+			}else{
+				return null;
+			}			
+		});	
+		
 	}
 
 }
