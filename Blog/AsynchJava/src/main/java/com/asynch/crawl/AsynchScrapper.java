@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.asynch.common.Article;
-import com.asynch.common.Result;
 import com.asynch.util.CommonUtils;
 
 public class AsynchScrapper extends CommonScrapper {
@@ -21,28 +24,24 @@ public class AsynchScrapper extends CommonScrapper {
 
 	@Override
 	public void process() {
-		CompletableFuture<String> future1 = CompletableFuture.supplyAsync(() -> {
-			try {
-				return getPageSource(urlList.get(0));
-			} catch (Exception e) {
-				return null;
-			}
-		});
-		CompletableFuture<Article> future2 = future1.thenApply(value -> {
-			if(value != null){
-				return fetchArticle(value);
-			}else{
-				return null;
-			}
-		});
-		CompletableFuture<Result> future3 = future2.thenApplyAsync(article -> {
-			if(article != null){
-				return getResult(article);
-			}else{
-				return null;
-			}			
-		});	
+		List<CompletableFuture<Article>> collect = urlList
+				.stream()
+					.map(url -> CompletableFuture.supplyAsync(() -> getPageSource(url), executor)
+												 .thenApply(pageSource -> fetchArticle(pageSource)))
+					.collect(Collectors.toList());
+		collect.stream().forEach(future -> future.whenComplete((result, error) -> {
+			System.out.println(result.getCleanContent());
+		}));
 		
+	}
+
+	public static void main(String[] args) throws IOException, InterruptedException {
+		final ExecutorService executor = Executors.newFixedThreadPool(50);
+		final String urlFile = "Links.txt";
+		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
+		scrapper.process();
+		Thread.sleep(10000);
+		executor.shutdown();
 	}
 
 }

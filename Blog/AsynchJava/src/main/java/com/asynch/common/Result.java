@@ -36,5 +36,9 @@ public class Result {
 	public void setDates(String dates) {
 		this.dates = dates;
 	}
+	
+	public String toString(){
+		return article.getCleanContent();
+	}
 
 }
