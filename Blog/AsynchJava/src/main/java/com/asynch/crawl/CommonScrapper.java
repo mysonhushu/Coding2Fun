@@ -26,7 +26,7 @@ public abstract class CommonScrapper implements IScrapper, IAsynchScrapper, Sync
 	
 	public String getPageSource(final String url)  {
 		try {
-			final String html = Jsoup.connect(url).get().html();
+			final String html = Jsoup.connect(url).timeout(70000).get().html();
 			return html;
 		} catch (Exception e) {
 			return null;

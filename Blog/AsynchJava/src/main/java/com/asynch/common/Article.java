@@ -61,5 +61,9 @@ public class Article {
 	public void setDomain(String domain) {
 		this.domain = domain;
 	}
+	
+	public String toString(){
+		return cleanContent;
+	}
 
 }

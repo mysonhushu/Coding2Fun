@@ -17,25 +17,46 @@ public class AsynchScrapper extends CommonScrapper {
 	private final List<String> urlList;
 	private final Executor executor;
 
-	public AsynchScrapper(final String urlFile, final Executor executor) throws IOException {
+	public AsynchScrapper(final String urlFile, final Executor executor)
+			throws IOException {
 		this.urlList = CommonUtils.getLinks(urlFile);
 		this.executor = executor;
 	}
 
 	@Override
 	public void process() {
-		List<CompletableFuture<Article>> collect = urlList
+
+		//Sol - 1
+		Stream<CompletableFuture<Article>> stream = urlList
 				.stream()
-					.map(url -> CompletableFuture.supplyAsync(() -> getPageSource(url), executor)
-												 .thenApply(pageSource -> fetchArticle(pageSource)))
-					.collect(Collectors.toList());
-		collect.stream().forEach(future -> future.whenComplete((result, error) -> {
-			System.out.println(result.getCleanContent());
-		}));
-		
+				.map(url -> CompletableFuture.supplyAsync(
+						() -> getPageSource(url), executor))
+				.map(future -> future.thenApply(pageSource -> {
+					final Article article = fetchArticle(pageSource);
+					return article;
+				}));
+		List<CompletableFuture<Article>> collect = stream.collect(Collectors
+				.toList());
+
+		collect.stream().forEach(
+				future -> future.whenComplete((result, error) -> {
+					System.out.println(result);
+				}));
+
+		//Sol - 2
+		/*for (final String url : urlList) {
+		CompletableFuture.supplyAsync(() -> getPageSource(url), executor)
+				.thenApply(pageSource -> {
+					final Article article = fetchArticle(pageSource);
+					return article;
+				}).whenComplete((result, error) -> {
+					System.out.println(url + " - " + result);
+				});
+		}*/
 	}
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws IOException,
+			InterruptedException {
 		final ExecutorService executor = Executors.newFixedThreadPool(50);
 		final String urlFile = "Links.txt";
 		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
