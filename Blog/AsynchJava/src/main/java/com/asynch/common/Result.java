@@ -3,7 +3,7 @@ package com.asynch.common;
 public class Result {
 
 	private final Article article;
-	private String organizations, locations, dates;
+	private String person, organizations, locations, dates;
 
 	public Result(final Article article) {
 		this.article = article;
@@ -21,6 +21,14 @@ public class Result {
 		return dates;
 	}
 
+	public String getPerson() {
+		return person;
+	}
+
+	public void setPerson(String person) {
+		this.person = person;
+	}
+
 	public Article getArticle() {
 		return article;
 	}
@@ -36,9 +44,9 @@ public class Result {
 	public void setDates(String dates) {
 		this.dates = dates;
 	}
-	
-	public String toString(){
-		return article.getCleanContent();
+
+	public String toString() {
+		return article.toString();
 	}
 
 }

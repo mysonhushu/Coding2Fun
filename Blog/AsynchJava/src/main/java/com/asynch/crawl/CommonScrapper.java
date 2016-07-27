@@ -1,50 +1,37 @@
 package com.asynch.crawl;
 
-import java.util.concurrent.CompletableFuture;
-
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import com.asynch.common.Article;
 import com.asynch.common.Result;
-import com.asynch.interfaces.IAsynchScrapper;
 import com.asynch.interfaces.IScrapper;
-import com.asynch.interfaces.SynchScrapper;
+import com.asynch.util.Tuple;
 
-public abstract class CommonScrapper implements IScrapper, IAsynchScrapper, SynchScrapper {
+public abstract class CommonScrapper implements IScrapper{
 
-	public CompletableFuture<String> getAsynchPageSource(final String url) {
-		CompletableFuture<String> result = null;
-		try {
-			final String html = Jsoup.connect(url).get().html();
-			result = CompletableFuture.completedFuture(html);
-		} catch (Exception e) {
-			result = new CompletableFuture<>();
-			result.completeExceptionally(e);
-		}
-		return result;
-	}
-	
-	public String getPageSource(final String url)  {
+	public Tuple<String, String> getPageSource(final String url) {		
 		try {
 			final String html = Jsoup.connect(url).timeout(70000).get().html();
-			return html;
+			return new Tuple<>(url, html);
 		} catch (Exception e) {
 			return null;
-			//throw e;
 		}
 	}
 
 	@Override
-	public Article fetchArticle(String pageSource) {
-		// TODO Auto-generated method stub
+	public Article fetchArticle(final Tuple<String, String> tuple) {		
 		final Article article = new Article();
-		article.setCleanContent(Jsoup.parse(pageSource).title());
+		final Document document = Jsoup.parse(tuple.get_2());			
+		article.setUrl(tuple.get_1());
+		article.setRawHtml(tuple.get_2());
+		article.setCleanContent(document.text());
+		article.setTitle(document.title());
 		return article;
 	}
 
 	@Override
 	public Result getResult(Article article) {
-		// TODO Auto-generated method stub
 		return new Result(article);
 	}
 

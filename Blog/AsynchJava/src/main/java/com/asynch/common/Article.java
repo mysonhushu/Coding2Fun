@@ -3,8 +3,7 @@ package com.asynch.common;
 public class Article {
 
 	private String rawHtml, cleanContent;
-	private String tags, metaKeywords, metaDecription;
-	private String title, domain;
+	private String title, url;
 
 	public String getRawHtml() {
 		return rawHtml;
@@ -22,30 +21,6 @@ public class Article {
 		this.cleanContent = cleanContent;
 	}
 
-	public String getTags() {
-		return tags;
-	}
-
-	public void setTags(String tags) {
-		this.tags = tags;
-	}
-
-	public String getMetaKeywords() {
-		return metaKeywords;
-	}
-
-	public void setMetaKeywords(String metaKeywords) {
-		this.metaKeywords = metaKeywords;
-	}
-
-	public String getMetaDecription() {
-		return metaDecription;
-	}
-
-	public void setMetaDecription(String metaDecription) {
-		this.metaDecription = metaDecription;
-	}
-
 	public String getTitle() {
 		return title;
 	}
@@ -54,16 +29,18 @@ public class Article {
 		this.title = title;
 	}
 
-	public String getDomain() {
-		return domain;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setDomain(String domain) {
-		this.domain = domain;
+	public void setUrl(String url) {
+		this.url = url;
 	}
-	
-	public String toString(){
-		return cleanContent;
+
+	public String toString() {
+		return new StringBuilder("Url : ")
+		.append(url).append("\n").append("Title : ")
+		.append(title).toString();
 	}
 
 }

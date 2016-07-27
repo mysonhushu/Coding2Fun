@@ -1,6 +1,8 @@
 package com.asynch.crawl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -55,14 +57,16 @@ public class AsynchScrapper extends CommonScrapper {
 		}*/
 	}
 
-	public static void main(String[] args) throws IOException,
+	/*public static void main(String[] args) throws IOException,
 			InterruptedException {
 		final ExecutorService executor = Executors.newFixedThreadPool(50);
-		final String urlFile = "Links.txt";
+		final String urlFile = "Links1.txt";
 		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
+		Instant start = Instant.now();
 		scrapper.process();
-		Thread.sleep(10000);
-		executor.shutdown();
-	}
+		Instant stop = Instant.now();
+		System.out.println(Duration.between(start, stop));
+		executor.shutdown();		
+	}*/
 
 }
