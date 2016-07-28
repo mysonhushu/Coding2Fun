@@ -3,7 +3,6 @@ package com.asynch.crawl;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -15,9 +14,9 @@ import com.asynch.util.CommonUtils;
 public class AsynchScrapper extends CommonScrapper {
 
 	private final List<String> urlList;
-	private final Executor executor;
+	private final ExecutorService executor;
 
-	public AsynchScrapper(final String urlFile, final Executor executor) throws IOException {
+	public AsynchScrapper(final String urlFile, final ExecutorService executor) throws IOException {
 		this.urlList = CommonUtils.getLinks(urlFile);
 		this.executor = executor;
 	}
@@ -52,7 +51,7 @@ public class AsynchScrapper extends CommonScrapper {
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		final ExecutorService executor = Executors.newFixedThreadPool(50);
+		final ExecutorService executor = Executors.newFixedThreadPool(70);
 		final String urlFile = "Links.txt";
 		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
 		scrapper.process();

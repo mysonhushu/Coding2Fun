@@ -1,11 +1,12 @@
 package com.asynch.crawl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-
-import com.asynch.common.Result;
-import com.asynch.util.CommonUtils;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import akka.Done;
 import akka.NotUsed;
@@ -15,35 +16,54 @@ import akka.stream.javadsl.Flow;
 import akka.stream.javadsl.Sink;
 import akka.stream.javadsl.Source;
 
+import com.asynch.common.Result;
+import com.asynch.util.CommonUtils;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 /**
  * Created by kkishore on 7/27/16.
  */
 public class AkkaStreamScrapper extends CommonScrapper {
 
 	private final List<String> urlList;
-	private final ActorSystem actorSystem = ActorSystem.create("AkkaStreamScrapper");
-	private final ActorMaterializer actorMaterializer = ActorMaterializer.create(actorSystem);
+	private final ExecutorService executor;
+	private final ActorSystem actorSystem;
+	private final ActorMaterializer actorMaterializer;
 
-	public AkkaStreamScrapper(final String file) throws IOException {
+	public AkkaStreamScrapper(final String file, final ExecutorService executor) throws IOException {
 		this.urlList = CommonUtils.getLinks(file);
+		this.executor = executor;
+		final Config config = ConfigFactory.parseFile(new File("D:\\Git\\Coding2Fun\\Blog\\AsynchJava\\src\\main\\resources\\application.conf"));
+		actorSystem = ActorSystem.create("AkkaStreamScrapper", config.getConfig("test"));
+		actorMaterializer = ActorMaterializer.create(actorSystem);
 	}
 
 	public void process() {
-		Source<String, NotUsed> source = Source.from(urlList);
-		Flow<String, Result, NotUsed> stages = Flow
-				.of(String.class)
-					.map(this::getPageSource).async()
-					.map(this::fetchArticle).async()
-					.map(this::getResult);
-		CompletionStage<Done> graph = source.via(stages).runWith(Sink.foreach(System.out::println),
+		Source<String, NotUsed> source = Source.from(urlList);		
+		final int parallelism = 32;
+		Flow<String, Result, NotUsed> stageAsync = Flow.of(String.class)
+			.mapAsyncUnordered(parallelism, (value) -> CompletableFuture.supplyAsync(() -> getPageSource(value), executor))
+			.mapAsyncUnordered(parallelism, (tuple) -> CompletableFuture.supplyAsync(() -> fetchArticle(tuple), executor))
+			.mapAsyncUnordered(parallelism, (article) -> CompletableFuture.supplyAsync(() -> getResult(article), executor));
+		CompletionStage<Done> graph = source.via(stageAsync).runWith(Sink.foreach(System.out::println),
 				actorMaterializer);
+		
 		graph.whenComplete((result, error) -> {
-			actorSystem.terminate();
+			System.out.println(result);
+			invokeDone();
 		});
+		//source.via(Flow.of(String.class).mapAsyncUnordered(10, url -> getPageSource(url)));
+	}
+	
+	private void invokeDone(){
+		actorSystem.terminate();
+		executor.shutdown();
 	}
 
 	public static void main(String[] ags) throws IOException {
-		final AkkaStreamScrapper scrapper = new AkkaStreamScrapper("Links.txt");
+		final ExecutorService executor = Executors.newFixedThreadPool(60);
+		final AkkaStreamScrapper scrapper = new AkkaStreamScrapper("Links.txt", executor);
 		scrapper.process();
 	}
 }

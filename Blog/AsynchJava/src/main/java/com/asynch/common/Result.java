@@ -46,7 +46,7 @@ public class Result {
 	}
 
 	public String toString() {
-		return article.toString();
+		return article != null ? article.toString(): "Empty Found";
 	}
 
 }

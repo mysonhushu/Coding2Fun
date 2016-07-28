@@ -17,9 +17,8 @@ public class CommonUtils {
 		}
 	}
 
-	public static boolean isBlank(String pageSource) {
-		// TODO Auto-generated method stub
-		return false;
+	public static boolean isNotBlank(String value) {
+		return value != null && !value.equals("");
 	}
 
 }
