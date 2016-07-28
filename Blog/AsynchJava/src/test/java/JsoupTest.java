@@ -20,7 +20,7 @@ public class JsoupTest {
 		});
 		urlList.close();*/
 		final String url = "http://www.foxsports.com.au/cricket/new-zealand-cricket-team-duck-for-cover-after-bizarre-bee-attack-in-zimbabwe/news-story/774463881f2d639562f0c7d0c26d1dce";
-		System.out.println(Jsoup.connect(url).get().title());
+		System.out.println(Jsoup.connect(url).timeout(70000).get().title());
 		
 	}
 

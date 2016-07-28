@@ -8,9 +8,9 @@ public interface IScrapper {
 	
 	public void process();
 	
-	public Tuple<String, String> getPageSource(final String url) throws Exception;
+	public Tuple getPageSource(final String url) throws Exception;
 	
-	public Article fetchArticle(final Tuple<String, String> tuple);
+	public Article fetchArticle(final Tuple tuple);
 	
 	public Result getResult(final Article article);
 

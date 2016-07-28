@@ -1,8 +1,6 @@
 package com.asynch.crawl;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 import com.asynch.util.CommonUtils;
@@ -24,12 +22,9 @@ public class SimpleScrapper extends CommonScrapper{
 			   .forEach(System.out::println);		
 	}
 	
-	/*public static void main(String[] args) throws IOException {
-		final SimpleScrapper scrapper = new SimpleScrapper("Links1.txt");
-		Instant start = Instant.now();
+	public static void main(String[] args) throws IOException {
+		final SimpleScrapper scrapper = new SimpleScrapper("Links.txt");
 		scrapper.process();
-		Instant stop = Instant.now();
-		System.out.println(Duration.between(start, stop));
-	}*/
+	}
 
 }

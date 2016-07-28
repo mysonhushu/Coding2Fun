@@ -10,17 +10,17 @@ import com.asynch.util.Tuple;
 
 public abstract class CommonScrapper implements IScrapper{
 
-	public Tuple<String, String> getPageSource(final String url) {		
+	public Tuple getPageSource(final String url) {
 		try {
 			final String html = Jsoup.connect(url).timeout(70000).get().html();
-			return new Tuple<>(url, html);
+			return new Tuple(url, html);
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
 	@Override
-	public Article fetchArticle(final Tuple<String, String> tuple) {		
+	public Article fetchArticle(final Tuple tuple) {
 		final Article article = new Article();
 		final Document document = Jsoup.parse(tuple.get_2());			
 		article.setUrl(tuple.get_1());
