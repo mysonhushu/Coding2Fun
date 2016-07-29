@@ -1,0 +1,4 @@
+CF - 60 Seconds
+PS - 3 Minutes
+Akka - 45 Seconds
+Sequential - 12 minutes
