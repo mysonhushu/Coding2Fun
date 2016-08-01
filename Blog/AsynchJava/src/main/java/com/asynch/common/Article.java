@@ -1,6 +1,8 @@
 package com.asynch.common;
 
-public class Article {
+import com.asynch.error.ExceptionHandler;
+
+public final class Article extends ExceptionHandler{
 
 	private String rawHtml, cleanContent;
 	private String title, url;

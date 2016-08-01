@@ -34,7 +34,7 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	public AkkaStreamScrapper(final String file, final ExecutorService executor) throws IOException {
 		this.urlList = CommonUtils.getLinks(file);
 		this.executor = executor;
-		final Config config = ConfigFactory.parseFile(new File("D:\\Git\\Coding2Fun\\Blog\\AsynchJava\\src\\main\\resources\\application.conf"));
+		final Config config = ConfigFactory.parseFile(new File("src/main/resources/application.conf"));
 		actorSystem = ActorSystem.create("AkkaStreamScrapper", config.getConfig("test"));
 		actorMaterializer = ActorMaterializer.create(actorSystem);
 	}

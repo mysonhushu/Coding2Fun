@@ -1,12 +1,14 @@
 package com.asynch.common;
 
-public class Result {
+import com.asynch.error.ExceptionHandler;
+
+public final class Result extends ExceptionHandler{
 
 	private final Article article;
-	private String person, organizations, locations, dates;
+	private String person, organizations, locations, dates;	
 
 	public Result(final Article article) {
-		this.article = article;
+		this.article = article;		
 	}
 
 	public String getOrganizations() {
@@ -46,7 +48,7 @@ public class Result {
 	}
 
 	public String toString() {
-		return article != null ? article.toString(): "Empty Found";
+		return hasError() ? getFullStackError(): article.toString();
 	}
 
 }

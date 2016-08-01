@@ -2,7 +2,7 @@ package com.asynch.interfaces;
 
 import com.asynch.common.Article;
 import com.asynch.common.Result;
-import com.asynch.util.Tuple;
+import com.asynch.common.Tuple;
 
 public interface IScrapper {
 	
