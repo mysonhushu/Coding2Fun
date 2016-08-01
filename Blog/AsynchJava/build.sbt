@@ -19,3 +19,5 @@ libraryDependencies += "com.typesafe.akka" % "akka-stream_2.11" % "2.4.8"
 
 
 fork in run := true
+
+fork in run := true
