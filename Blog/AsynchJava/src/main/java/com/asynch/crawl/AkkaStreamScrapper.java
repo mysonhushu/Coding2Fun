@@ -53,7 +53,6 @@ public class AkkaStreamScrapper extends CommonScrapper {
 			System.out.println(result);
 			invokeDone();
 		});
-		//source.via(Flow.of(String.class).mapAsyncUnordered(10, url -> getPageSource(url)));
 	}
 	
 	private void invokeDone(){
@@ -62,7 +61,7 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	}
 
 	public static void main(String[] ags) throws IOException {
-		final ExecutorService executor = Executors.newFixedThreadPool(60);
+		final ExecutorService executor = Executors.newFixedThreadPool(20);
 		final AkkaStreamScrapper scrapper = new AkkaStreamScrapper("Links.txt", executor);
 		scrapper.process();
 	}

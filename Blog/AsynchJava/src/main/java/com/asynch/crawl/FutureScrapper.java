@@ -41,7 +41,7 @@ public class FutureScrapper extends CommonScrapper{
 						System.out.println(resultFuture.get());
 						futureList.remove(i);
 					}else{
-						Thread.sleep(1000);
+						Thread.sleep(100);
 						i = i+1;
 						continue;
 					}
@@ -65,7 +65,7 @@ public class FutureScrapper extends CommonScrapper{
 	}
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		final ExecutorService executor = Executors.newFixedThreadPool(70);
+		final ExecutorService executor = Executors.newFixedThreadPool(30);
 		final String urlFile = "Links.txt";
 		final FutureScrapper scrapper = new FutureScrapper(urlFile, executor);
 		scrapper.process();

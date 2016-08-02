@@ -16,7 +16,8 @@ public class AsynchScrapper extends CommonScrapper {
 	private final List<String> urlList;
 	private final ExecutorService executor;
 
-	public AsynchScrapper(final String urlFile, final ExecutorService executor) throws IOException {
+	public AsynchScrapper(final String urlFile, final ExecutorService executor)
+			throws IOException {
 		this.urlList = CommonUtils.getLinks(urlFile);
 		this.executor = executor;
 	}
@@ -25,19 +26,13 @@ public class AsynchScrapper extends CommonScrapper {
 	public void process() {
 
 		// Sol - 1
-		Stream<CompletableFuture<Result>> stream = urlList
+		final Stream<CompletableFuture<Result>> stream = urlList
 				.stream()
 				.map(url -> CompletableFuture.supplyAsync(() -> getPageSource(url), executor))
 				.map(future -> future.thenApply(pageSource -> fetchArticle(pageSource))
 									 .thenApply(article -> getResult(article)));
-				
-						
-		List<CompletableFuture<Result>> collect = stream.collect(Collectors.toList());
-
-		collect.stream().forEach(future -> future.whenComplete((result, error) ->
-			{
-				System.out.println(result);							
-			}));
+		final List<CompletableFuture<Result>> collect = stream.collect(Collectors.toList());
+		collect.stream().forEach(future -> future.whenComplete((result, error) -> System.out.println(result)));
 
 		// Sol - 2
 		/*
@@ -49,8 +44,9 @@ public class AsynchScrapper extends CommonScrapper {
 		 */
 	}
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		final ExecutorService executor = Executors.newFixedThreadPool(70);
+	public static void main(String[] args) throws IOException,
+			InterruptedException {
+		final ExecutorService executor = Executors.newFixedThreadPool(30);
 		final String urlFile = "Links.txt";
 		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
 		scrapper.process();
