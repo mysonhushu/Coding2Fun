@@ -1,4 +1,3 @@
-CF - 60 Seconds
-PS - 3 Minutes
-Akka - 45 Seconds
-Sequential - 12 minutes
+Akka Scrapper - 2.30 Minutes
+Asynch Scrapper - 1.30 Minutes
+Future Scrapper - 3.30 Minutes
