@@ -2,6 +2,7 @@ package com.asynch.crawl;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -56,12 +57,14 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	}
 	
 	private void invokeDone(){
+        System.out.println(new Date());
 		actorSystem.terminate();
 		executor.shutdown();
 	}
 
 	public static void main(String[] ags) throws IOException {
-		final ExecutorService executor = Executors.newFixedThreadPool(20);
+        System.out.println(new Date());
+        final ExecutorService executor = Executors.newFixedThreadPool(20);
 		final AkkaStreamScrapper scrapper = new AkkaStreamScrapper("Links.txt", executor);
 		scrapper.process();
 	}

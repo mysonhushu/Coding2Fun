@@ -1,6 +1,7 @@
 package com.asynch.crawl;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +33,7 @@ public class AsynchScrapper extends CommonScrapper {
 				.map(future -> future.thenApply(pageSource -> fetchArticle(pageSource))
 									 .thenApply(article -> getResult(article)));
 		final List<CompletableFuture<Result>> collect = stream.collect(Collectors.toList());
-		collect.stream().forEach(future -> future.whenComplete((result, error) -> System.out.println(result)));
+		collect.stream().forEach(future -> future.whenComplete((result, error) -> System.out.println(result +"\n"+new Date())));
 
 		// Sol - 2
 		/*
@@ -46,7 +47,8 @@ public class AsynchScrapper extends CommonScrapper {
 
 	public static void main(String[] args) throws IOException,
 			InterruptedException {
-		final ExecutorService executor = Executors.newFixedThreadPool(30);
+        System.out.println(new Date());
+        final ExecutorService executor = Executors.newFixedThreadPool(30);
 		final String urlFile = "Links.txt";
 		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
 		scrapper.process();
