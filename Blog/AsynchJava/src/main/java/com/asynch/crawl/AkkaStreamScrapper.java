@@ -2,14 +2,10 @@ package com.asynch.crawl;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import akka.Done;
 import akka.NotUsed;
@@ -34,8 +30,6 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	private final ActorSystem actorSystem;
 	private final ActorMaterializer actorMaterializer;
 
-	private LocalDateTime time1, time2;
-
 	public AkkaStreamScrapper(final String file, final ExecutorService executor) throws IOException {
 		this.urlList = CommonUtils.getLinks(file);
 		this.executor = executor;
@@ -45,7 +39,6 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	}
 
 	public void process() {
-		time1 = LocalDateTime.now();
 		Source<String, NotUsed> source = Source.from(urlList);		
 		final int parallelism = 32;
 		Flow<String, Result, NotUsed> stageAsync = Flow.of(String.class)
@@ -62,12 +55,6 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	}
 	
 	private void invokeDone(){
-  		time2 = LocalDateTime.now();
-        try {
-            bw.write("Akka Stream : "+Duration.between(time1, time2).getSeconds()+"\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         actorSystem.terminate();
 		executor.shutdown();
 	}
