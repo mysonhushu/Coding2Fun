@@ -2,6 +2,8 @@ package com.asynch.crawl;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -32,6 +34,8 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	private final ActorSystem actorSystem;
 	private final ActorMaterializer actorMaterializer;
 
+	private LocalDateTime time1, time2;
+
 	public AkkaStreamScrapper(final String file, final ExecutorService executor) throws IOException {
 		this.urlList = CommonUtils.getLinks(file);
 		this.executor = executor;
@@ -41,6 +45,7 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	}
 
 	public void process() {
+		time1 = LocalDateTime.now();
 		Source<String, NotUsed> source = Source.from(urlList);		
 		final int parallelism = 32;
 		Flow<String, Result, NotUsed> stageAsync = Flow.of(String.class)
@@ -57,15 +62,13 @@ public class AkkaStreamScrapper extends CommonScrapper {
 	}
 	
 	private void invokeDone(){
-        System.out.println(new Date());
-		actorSystem.terminate();
+  		time2 = LocalDateTime.now();
+        try {
+            bw.write("Akka Stream : "+Duration.between(time1, time2).getSeconds()+"\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        actorSystem.terminate();
 		executor.shutdown();
-	}
-
-	public static void main(String[] ags) throws IOException {
-        System.out.println(new Date());
-        final ExecutorService executor = Executors.newFixedThreadPool(20);
-		final AkkaStreamScrapper scrapper = new AkkaStreamScrapper("Links.txt", executor);
-		scrapper.process();
 	}
 }

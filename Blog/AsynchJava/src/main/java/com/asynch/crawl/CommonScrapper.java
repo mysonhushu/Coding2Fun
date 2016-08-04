@@ -9,7 +9,17 @@ import com.asynch.common.Tuple;
 import com.asynch.error.ScrapperException;
 import com.asynch.interfaces.IScrapper;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public abstract class CommonScrapper implements IScrapper {
+
+	protected final BufferedWriter bw;
+
+	public CommonScrapper() throws IOException{
+		bw = new BufferedWriter(new FileWriter("Benchmark.dat", true));
+	}
 
 	public Tuple getPageSource(final String url) {
 		final Tuple tuple = new Tuple();

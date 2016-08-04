@@ -21,10 +21,5 @@ public class SimpleScrapper extends CommonScrapper{
 			   .map(article -> getResult(article))
 			   .forEach(System.out::println);		
 	}
-	
-	public static void main(String[] args) throws IOException {
-		final SimpleScrapper scrapper = new SimpleScrapper("Links.txt");
-		scrapper.process();
-	}
 
 }

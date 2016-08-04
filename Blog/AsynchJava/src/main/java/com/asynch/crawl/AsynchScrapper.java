@@ -1,6 +1,8 @@
 package com.asynch.crawl;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +18,7 @@ public class AsynchScrapper extends CommonScrapper {
 
 	private final List<String> urlList;
 	private final ExecutorService executor;
+	private LocalDateTime time1, time2;
 
 	public AsynchScrapper(final String urlFile, final ExecutorService executor)
 			throws IOException {
@@ -25,7 +28,7 @@ public class AsynchScrapper extends CommonScrapper {
 
 	@Override
 	public void process() {
-
+		time1 = LocalDateTime.now();
 		// Sol - 1
 		final Stream<CompletableFuture<Result>> stream = urlList
 				.stream()
@@ -33,7 +36,10 @@ public class AsynchScrapper extends CommonScrapper {
 				.map(future -> future.thenApply(pageSource -> fetchArticle(pageSource))
 									 .thenApply(article -> getResult(article)));
 		final List<CompletableFuture<Result>> collect = stream.collect(Collectors.toList());
-		collect.stream().forEach(future -> future.whenComplete((result, error) -> System.out.println(result +"\n"+new Date())));
+		collect.stream().forEach(future -> future.whenComplete((result, error) -> {
+			time2 = LocalDateTime.now();
+			System.out.println(result);
+		}));
 
 		// Sol - 2
 		/*
@@ -45,14 +51,8 @@ public class AsynchScrapper extends CommonScrapper {
 		 */
 	}
 
-	public static void main(String[] args) throws IOException,
-			InterruptedException {
-        System.out.println(new Date());
-        final ExecutorService executor = Executors.newFixedThreadPool(30);
-		final String urlFile = "Links.txt";
-		final AsynchScrapper scrapper = new AsynchScrapper(urlFile, executor);
-		scrapper.process();
-		executor.shutdown();
+	public long getTime(){
+		return Duration.between(time1, time2).getSeconds();
 	}
 
 }

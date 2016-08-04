@@ -6,6 +6,8 @@ import com.asynch.common.Tuple;
 import com.asynch.util.CommonUtils;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +17,7 @@ public class FutureScrapper extends CommonScrapper {
 
     private final List<String> urlList;
     private final ExecutorService executor;
+    private LocalDateTime time1, time2;
 
     public FutureScrapper(final String urlFile, final ExecutorService executor) throws IOException {
         this.urlList = CommonUtils.getLinks(urlFile);
@@ -23,6 +26,7 @@ public class FutureScrapper extends CommonScrapper {
 
     @Override
     public void process() {
+        time1 = LocalDateTime.now();
         final List<Future<Result>> futureList = new ArrayList<>(10);
         for (final String url : urlList) {
             futureList.add(executor.submit(invokeCallable(url)));
@@ -39,7 +43,7 @@ public class FutureScrapper extends CommonScrapper {
             }
 
         }
-        System.out.println(new Date());
+        time2 = LocalDateTime.now();
     }
 
     private Callable<Result> invokeCallable(final String url) {
@@ -50,13 +54,8 @@ public class FutureScrapper extends CommonScrapper {
         };
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        System.out.println(new Date());
-        final ExecutorService executor = Executors.newFixedThreadPool(30);
-        final String urlFile = "Links.txt";
-        final FutureScrapper scrapper = new FutureScrapper(urlFile, executor);
-        scrapper.process();
-        executor.shutdown();
+    public long getTime(){
+        return Duration.between(time1, time2).getSeconds();
     }
 
 }
