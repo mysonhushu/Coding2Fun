@@ -1,2 +1,3 @@
 # Coding2Fun
-Blog code
+
+Repository for my blog. Contains Code samples
